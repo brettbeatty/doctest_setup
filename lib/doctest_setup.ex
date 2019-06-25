@@ -1,18 +1,10 @@
 defmodule DoctestSetup do
-  @moduledoc """
-  Documentation for DoctestSetup.
-  """
+  alias __MODULE__.{Macro, Meta}
 
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> DoctestSetup.hello()
-      :world
-
-  """
-  def hello do
-    :world
+  defmacro __using__(_opts) do
+    quote do
+      import unquote(Macro), only: [setup_doctest: 1, setup_doctest: 2]
+      @before_compile unquote(Meta)
+    end
   end
 end
