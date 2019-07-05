@@ -1,4 +1,6 @@
 # DoctestSetup
+[![Hex](https://img.shields.io/hexpm/v/doctest_setup.svg)](https://hex.pm/packages/doctest_setup) [![CircleCI](https://circleci.com/gh/brettbeatty/doctest_setup.svg?style=svg)](https://circleci.com/gh/brettbeatty/doctest_setup)
+
 
 **TODO: Add description**
 

@@ -1,0 +1,176 @@
+version: 2.1
+executors:
+  test:
+    docker:
+      - image: elixir:1.9-alpine
+        environment:
+          MIX_ENV: test
+workflows:
+  version: 2
+  test:
+    jobs:
+      - build-test
+      - dialyze:
+          requires:
+            - build-test
+      - lint:
+          requires:
+            - build-test
+      - test:
+          requires:
+            - build-test
+jobs:
+  build-test:
+    executor: test
+    steps:
+      - checkout
+
+      - run:
+          name: Mix & Rebar
+          command: |
+            mix local.hex --force
+            mix local.rebar --force
+
+      - restore_cache:
+          name: Restore Dependency Cache
+          keys:
+            - v1-mix-cache-test-{{ checksum "mix.lock" }}
+            - v1-mix-cache-test-{{ .Branch }}
+            - v1-mix-cache-test
+
+      - run:
+          name: Install Dependencies
+          command: |
+            mix deps.get --only test
+            mix deps.compile
+
+      - save_cache:
+          name: Cache Dependencies (mix.lock)
+          key: v1-mix-cache-test-{{ checksum "mix.lock" }}
+          paths:
+            - deps
+            - _build/test/lib
+
+      - save_cache:
+          name: Cache Dependencies (branch)
+          key: v1-mix-cache-test-{{ .Branch }}
+          paths:
+            - deps
+            - _build/test/lib
+
+      - save_cache:
+          name: Cache Dependencies (repo)
+          key: v1-mix-cache-test
+          paths:
+            - deps
+            - _build/test/lib
+
+      - restore_cache:
+          name: Restore Build Cache
+          keys:
+            - v1-build-cache-test-{{ .Branch }}
+            - v1-build-cache-test
+
+      - run:
+          name: Compile
+          command: mix compile
+
+      - save_cache:
+          name: Cache Build (branch)
+          key: v1-build-cache-test-{{ .Branch }}
+          paths:
+            - _build/test/lib/doctest_setup
+
+      - save_cache:
+          name: Cache Build (repo)
+          key: v1-build-cache-test
+          paths:
+            - _build/test/lib/doctest_setup
+
+      - save_cache:
+          name: Cache Commit Build
+          key: v1-build-test-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - .
+            - ~/.mix/archives
+
+      - persist_to_workspace:
+          root: .
+          paths:
+            - '**/*'
+
+  dialyze:
+    executor: test
+    steps:
+      - restore_cache:
+          name: Restore Commit Build
+          keys:
+            - v1-build-test-{{ .Environment.CIRCLE_SHA1 }}
+
+      - restore_cache:
+          name: Restore PLT Cache
+          keys:
+            - v1-plt-cache-{{ checksum "mix.lock" }}
+            - v1-plt-cache-{{ .Branch }}
+            - v1-plt-cache
+
+      - run:
+          name: Generate PLT
+          command: |
+            mkdir -p _core_plt _plt
+            cp _plt/* _build/test/ || :
+            mix dialyzer --plt
+            cp _build/test/dialyxir_* _plt/
+
+      - save_cache:
+          name: Cache PLT (mix.lock)
+          key: v1-plt-cache-{{ checksum "mix.lock" }}
+          paths:
+            - _core_plt
+            - _plt
+
+      - save_cache:
+          name: Cache PLT (branch)
+          key: v1-plt-cache-{{ .Branch }}
+          paths:
+            - _core_plt
+            - _plt
+
+      - save_cache:
+          name: Cache PLT (repo)
+          key: v1-plt-cache
+          paths:
+            - _core_plt
+            - _plt
+
+      - run:
+          name: Dialyze
+          command: mix dialyzer
+
+  lint:
+    executor: test
+    steps:
+      - restore_cache:
+          name: Restore Commit Build
+          keys:
+            - v1-build-test-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: Check Formatted
+          command: mix format --check-formatted
+
+      - run:
+          name: Lint
+          command: mix credo --strict
+
+  test:
+    executor: test
+    steps:
+      - restore_cache:
+          name: Restore Commit Build
+          keys:
+            - v1-build-test-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: Test
+          command: mix test

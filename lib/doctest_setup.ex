@@ -1,4 +1,7 @@
 defmodule DoctestSetup do
+  @moduledoc """
+  Allows setting up doctests.
+  """
   alias __MODULE__.{Macro, Meta}
 
   defmacro __using__(_opts) do

@@ -4,19 +4,26 @@ defmodule DoctestSetup.MixProject do
   def project do
     [
       app: :doctest_setup,
+      name: "DoctestSetup",
       version: "0.1.0",
+      description: "Set up stateful doctests",
+      source_url: "https://github.com/brettbeatty/doctest_setup",
       elixir: "~> 1.9",
-      elixirc_paths: elixirc_paths(),
-      start_permanent: Mix.env() == :prod
+      elixirc_paths: if(Mix.env() == :test, do: ["lib", "test/examples"], else: ["lib"]),
+      package: [
+        licenses: ["MIT"],
+        links: %{"GitHub" => "https://github.com/brettbeatty/doctest_setup"}
+      ],
+      start_permanent: Mix.env() == :prod,
+      deps: [
+        {:credo, "~> 1.1", only: [:dev, :test], runtime: false},
+        {:dialyxir, "~> 0.5", only: [:dev, :test]},
+        {:ex_doc, "~> 0.20", only: [:dev, :test]}
+      ],
+      dialyzer: [
+        plt_core_path: "_core_plt"
+      ]
     ]
-  end
-
-  defp elixirc_paths do
-    if Mix.env() == :test do
-      ["lib", "test/examples"]
-    else
-      ["lib"]
-    end
   end
 
   def application do

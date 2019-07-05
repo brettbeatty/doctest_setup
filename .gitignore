@@ -1,6 +1,9 @@
 # The directory Mix will write compiled artifacts to.
 /_build/
 
+# The directory to which Dialyxir will write core PLT
+/_core_plt/
+
 # If you run "mix test --cover", coverage assets end up here.
 /cover/
 
@@ -21,4 +24,3 @@ erl_crash.dump
 
 # Ignore package tarball (built via "mix hex.build").
 doctest_setup-*.tar
-
