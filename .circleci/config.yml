@@ -10,9 +10,6 @@ workflows:
   test:
     jobs:
       - build-test
-      - dialyze:
-          requires:
-            - build-test
       - lint:
           requires:
             - build-test
@@ -98,54 +95,6 @@ jobs:
           root: .
           paths:
             - '**/*'
-
-  dialyze:
-    executor: test
-    steps:
-      - restore_cache:
-          name: Restore Commit Build
-          keys:
-            - v1-build-test-{{ .Environment.CIRCLE_SHA1 }}
-
-      - restore_cache:
-          name: Restore PLT Cache
-          keys:
-            - v1-plt-cache-{{ checksum "mix.lock" }}
-            - v1-plt-cache-{{ .Branch }}
-            - v1-plt-cache
-
-      - run:
-          name: Generate PLT
-          command: |
-            mkdir -p _core_plt _plt
-            cp _plt/* _build/test/ || :
-            mix dialyzer --plt
-            cp _build/test/dialyxir_* _plt/
-
-      - save_cache:
-          name: Cache PLT (mix.lock)
-          key: v1-plt-cache-{{ checksum "mix.lock" }}
-          paths:
-            - _core_plt
-            - _plt
-
-      - save_cache:
-          name: Cache PLT (branch)
-          key: v1-plt-cache-{{ .Branch }}
-          paths:
-            - _core_plt
-            - _plt
-
-      - save_cache:
-          name: Cache PLT (repo)
-          key: v1-plt-cache
-          paths:
-            - _core_plt
-            - _plt
-
-      - run:
-          name: Dialyze
-          command: mix dialyzer
 
   lint:
     executor: test
