@@ -4,22 +4,22 @@ defmodule DoctestSetup.Examples.ArityOptTest do
   alias DoctestSetup.Examples.ArityOpt
   doctest ArityOpt, import: true
 
-  setup_doctest arity: arity do
+  doctest_setup arity: arity do
     Process.put(:arity, arity)
     :ok
   end
 
-  setup_doctest arity: nil do
+  doctest_setup arity: nil do
     Process.put(:value, :moduledoc)
     :ok
   end
 
-  setup_doctest arity: 0 do
+  doctest_setup arity: 0 do
     Process.put(:value, :zero)
     :ok
   end
 
-  setup_doctest arity: 1 do
+  doctest_setup arity: 1 do
     Process.put(:value, :one)
     :ok
   end

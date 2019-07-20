@@ -2,7 +2,7 @@ defmodule DoctestSetup.Macro do
   @moduledoc false
   alias DoctestSetup.Error
 
-  defmacro setup_doctest(opts \\ [], do: block) do
+  defmacro doctest_setup(opts \\ [], do: block) do
     check_for_ex_unit!(__CALLER__)
 
     quote do

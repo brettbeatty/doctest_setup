@@ -3,22 +3,22 @@ defmodule DoctestSetup.Examples.NameOptTest do
   use DoctestSetup
   doctest DoctestSetup.Examples.NameOpt, import: true
 
-  setup_doctest name: name do
+  doctest_setup name: name do
     Process.put(:name, name)
     :ok
   end
 
-  setup_doctest name: nil do
+  doctest_setup name: nil do
     Process.put(:value, 3)
     :ok
   end
 
-  setup_doctest name: :alpha do
+  doctest_setup name: :alpha do
     Process.put(:value, 4)
     :ok
   end
 
-  setup_doctest name: :bravo do
+  doctest_setup name: :bravo do
     Process.put(:value, 5)
     :ok
   end

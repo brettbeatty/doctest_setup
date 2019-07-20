@@ -5,17 +5,17 @@ defmodule DoctestSetup.Examples.ModuleOptTest do
   doctest Alpha
   doctest Bravo
 
-  setup_doctest module: module do
+  doctest_setup module: module do
     Process.put(:module, module)
     :ok
   end
 
-  setup_doctest module: Alpha do
+  doctest_setup module: Alpha do
     Process.put(:value, :alpha)
     :ok
   end
 
-  setup_doctest module: Bravo do
+  doctest_setup module: Bravo do
     Process.put(:value, :bravo)
     :ok
   end
