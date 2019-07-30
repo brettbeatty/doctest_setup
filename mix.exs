@@ -14,13 +14,14 @@ defmodule DoctestSetup.MixProject do
         licenses: ["MIT"],
         links: %{"GitHub" => "https://github.com/brettbeatty/doctest_setup"}
       ],
+      docs: [
+        api_reference: false,
+        main: "DoctestSetup"
+      ],
       start_permanent: Mix.env() == :prod,
       deps: [
         {:credo, "~> 1.1", only: [:dev, :test], runtime: false},
-        {:ex_doc, "~> 0.20", only: [:dev, :test]}
-      ],
-      dialyzer: [
-        plt_core_path: "_core_plt"
+        {:ex_doc, "~> 0.21", only: [:dev, :test]}
       ]
     ]
   end
