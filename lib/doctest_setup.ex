@@ -62,10 +62,10 @@ defmodule DoctestSetup do
 
     quote do
       setup context do
-        case __doctest_setup_meta__(context) do
-          %{unquote_splicing(opts)} ->
-            unquote(block)
-
+        with %{test_type: :doctest} <- context,
+             %{unquote_splicing(opts)} <- __doctest_setup_meta__(context) do
+          unquote(block)
+        else
           _ ->
             :ok
         end
