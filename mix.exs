@@ -8,7 +8,7 @@ defmodule DoctestSetup.MixProject do
       version: "0.1.0",
       description: "Set up stateful doctests",
       source_url: "https://github.com/brettbeatty/doctest_setup",
-      elixir: "~> 1.9",
+      elixir: "~> 1.7",
       elixirc_paths: elixirc_paths(),
       package: [
         licenses: ["MIT"],
